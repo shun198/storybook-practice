@@ -1,1 +1,1 @@
-# storybook-practice
+# Code for practicing Storybook

@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"storybook-mcp": {
+			"url": "http://localhost:6006",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
