@@ -3,7 +3,6 @@
 // https://zenn.dev/takuya77088/articles/f7149723b3b2f2
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -55,59 +54,15 @@ server.registerTool(
     inputSchema: {},
   },
   async () => {
-    const jsonString = JSON.stringify(storyFiles);
-    const blob = Buffer.from(jsonString).toString("base64");
+    const content: any[] = storyFiles.map((f) => ({
+      type: "resource_link",
+      uri: `file://${path.join(storiesDir, f.file)}`,
+      name: f.componentName,
+      mimeType: "text/typescript",
+      description: `Story file for component ${f.file.replace(/\.stories\.tsx?$/, "")}`,
+    }));
     return {
-      content: [
-        {
-          type: "resource",
-          resource: {
-            blob: blob,
-            uri: "local:storybook/components.json",
-            text: "Components list JSON",
-            mimeType: "application/json",
-          },
-        },
-      ],
-    };
-  }
-);
-
-/**
- * コンポーネントのprops情報を返す
- */
-server.registerTool(
-  "getComponentProps",
-  {
-    title: "getComponentProps",
-    description: "Get the props information for a specific component",
-    inputSchema: {
-      componentName: z.string().describe("The name of the component"),
-    },
-  },
-  async ({ componentName }) => {
-    const data = {
-      component: componentName,
-      props: {
-        title: { type: "string", required: true },
-        onClick: { type: "function", required: false },
-      },
-    };
-    const jsonString = JSON.stringify(data);
-    const blob = Buffer.from(jsonString).toString("base64");
-    // https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-contents
-    return {
-      content: [
-        {
-          type: "resource",
-          resource: {
-            blob: blob,
-            uri: `local:storybook/${componentName}.json`,
-            text: `Props info for ${componentName}`,
-            mimeType: "application/json",
-          },
-        },
-      ],
+      content
     };
   }
 );
