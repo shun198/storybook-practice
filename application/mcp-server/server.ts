@@ -13,39 +13,57 @@ const __dirname = path.dirname(__filename);
 
 const server = new McpServer({ name: "storybook-mcp", version: "1.0.0" });
 
-const storiesDir = path.resolve(__dirname, "../src/stories");
-console.log("Reading stories from:", storiesDir);
+// dist/server.jsから見たstoriesディレクトリのパス
+const storiesDir = path.resolve(__dirname, "../../src/stories");
+
+/**
+ * storiesフォルダからコンポーネント一覧を取得する
+ */
+function loadStoryComponents(): { file: string; componentName: string }[] {
+  if (!fs.existsSync(storiesDir)) {
+    console.error(`Stories directory not found: ${storiesDir}`);
+    process.exit(1);
+  }
+
+  const files = fs
+    .readdirSync(storiesDir)
+    .filter((f) => f.endsWith(".stories.ts") || f.endsWith(".stories.tsx"))
+    .map((f) => ({
+      file: f,
+      componentName: f.replace(/\.stories\.tsx?$/, "")
+    }));
+
+  if (files.length === 0) {
+    console.error(`No components found in: ${storiesDir}`);
+    process.exit(1);
+  }
+
+  return files;
+}
+
+// ---- 初期化時にロード ----
+const storyFiles = loadStoryComponents();
 
 /**
  * storiesフォルダ内のコンポーネント一覧を返す
  */
-server.tool(
+server.registerTool(
   "getComponents",
-  "Get the list of Storybook story files under src/stories",
-  {},
+  {
+    title: "getComponents",
+    description: "Get the list of Storybook story files under src/stories",
+    inputSchema: {},
+  },
   async () => {
-    if (!fs.existsSync(storiesDir)) {
-      return {
-        content: [
-          { type: "text", text: "No stories directory found." }
-        ]
-      };
-    }
-    const files = fs
-      .readdirSync(storiesDir)
-      .filter((f) => f.endsWith(".stories.ts") || f.endsWith(".stories.tsx"))
-      .map((f) => ({
-        file: f,
-        componentName: f.replace(/\.stories\.tsx?$/, "")
-      }));
     return {
       content: [
         {
           type: "resource",
           resource: {
-            blob: JSON.stringify(files),
+            blob: JSON.stringify(storyFiles),
             uri: "local:storybook/components.json",
             text: "Components list JSON",
+            mimeType: "application/json",
           },
         },
       ],
@@ -56,11 +74,14 @@ server.tool(
 /**
  * コンポーネントのprops情報を返す
  */
-server.tool(
+server.registerTool(
   "getComponentProps",
-  "Get the props information for a specific component",
   {
-    componentName: z.string().describe("The name of the component"),
+    title: "getComponentProps",
+    description: "Get the props information for a specific component",
+    inputSchema: {
+      componentName: z.string().describe("The name of the component"),
+    },
   },
   async ({ componentName }) => {
     const data = {
@@ -70,7 +91,7 @@ server.tool(
         onClick: { type: "function", required: false },
       },
     };
-
+    // https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-contents
     return {
       content: [
         {
@@ -79,6 +100,7 @@ server.tool(
             blob: JSON.stringify(data),
             uri: `local:storybook/${componentName}.json`,
             text: `Props info for ${componentName}`,
+            mimeType: "application/json",
           },
         },
       ],
@@ -86,6 +108,5 @@ server.tool(
   }
 );
 
-console.log("Starting Storybook MCP server...");
 const transport = new StdioServerTransport();
 await server.connect(transport);
