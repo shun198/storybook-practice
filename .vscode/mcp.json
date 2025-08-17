@@ -1,9 +1,9 @@
 {
 	"servers": {
 		"storybook-mcp": {
-			"url": "http://localhost:6006",
-			"type": "http"
+			"type": "stdio",
+			"command": "node",
+			"args": ["application/mcp-server/dist/server.js"],
 		}
 	},
-	"inputs": []
 }
