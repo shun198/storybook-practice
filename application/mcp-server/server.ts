@@ -53,6 +53,8 @@ server.registerTool(
     description: "Get the list of Storybook story files under src/stories",
     inputSchema: {},
   },
+  // https://github.com/modelcontextprotocol/typescript-sdk?tab=readme-ov-file#resourcelinks
+  // パフォーマンスのため、resource_linkを使ってファイルのURIを返す
   async () => {
     const content: any[] = storyFiles.map((f) => ({
       type: "resource_link",
