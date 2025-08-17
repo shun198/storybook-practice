@@ -1,5 +1,6 @@
 // https://github.com/modelcontextprotocol/typescript-sdk
 // https://developers.play.jp/entry/2025/06/20/191042
+// https://zenn.dev/takuya77088/articles/f7149723b3b2f2
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -19,7 +20,7 @@ server.tool(
   "getComponents",
   "Get the list of Storybook story files under src/stories",
   async () => {
-    const storiesDir = path.resolve(__dirname, "../src/stories");
+    const storiesDir = path.resolve(__dirname, ".application/src/stories");
     if (!fs.existsSync(storiesDir)) {
       return {
         content: [
