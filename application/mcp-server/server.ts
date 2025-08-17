@@ -55,12 +55,14 @@ server.registerTool(
     inputSchema: {},
   },
   async () => {
+    const jsonString = JSON.stringify(storyFiles);
+    const blob = Buffer.from(jsonString).toString("base64");
     return {
       content: [
         {
           type: "resource",
           resource: {
-            blob: JSON.stringify(storyFiles),
+            blob: blob,
             uri: "local:storybook/components.json",
             text: "Components list JSON",
             mimeType: "application/json",
@@ -91,13 +93,15 @@ server.registerTool(
         onClick: { type: "function", required: false },
       },
     };
+    const jsonString = JSON.stringify(data);
+    const blob = Buffer.from(jsonString).toString("base64");
     // https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-contents
     return {
       content: [
         {
           type: "resource",
           resource: {
-            blob: JSON.stringify(data),
+            blob: blob,
             uri: `local:storybook/${componentName}.json`,
             text: `Props info for ${componentName}`,
             mimeType: "application/json",
