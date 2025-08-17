@@ -3,7 +3,7 @@
 		"storybook-mcp": {
 			"type": "stdio",
 			"command": "node",
-			"args": ["application/mcp-server/dist/server.js"],
+			"args": ["${workspaceFolder}/application/mcp-server/dist/server.js"],
 		}
 	},
 }

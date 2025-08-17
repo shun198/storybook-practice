@@ -13,14 +13,17 @@ const __dirname = path.dirname(__filename);
 
 const server = new McpServer({ name: "storybook-mcp", version: "1.0.0" });
 
+const storiesDir = path.resolve(__dirname, "../src/stories");
+console.log("Reading stories from:", storiesDir);
+
 /**
  * storiesフォルダ内のコンポーネント一覧を返す
  */
 server.tool(
   "getComponents",
   "Get the list of Storybook story files under src/stories",
+  {},
   async () => {
-    const storiesDir = path.resolve(__dirname, ".application/src/stories");
     if (!fs.existsSync(storiesDir)) {
       return {
         content: [
@@ -28,15 +31,13 @@ server.tool(
         ]
       };
     }
-
     const files = fs
       .readdirSync(storiesDir)
-      .filter((f) => f.endsWith(".stories.tsx"))
+      .filter((f) => f.endsWith(".stories.ts") || f.endsWith(".stories.tsx"))
       .map((f) => ({
         file: f,
-        componentName: f.replace(".stories.tsx", "")
+        componentName: f.replace(/\.stories\.tsx?$/, "")
       }));
-
     return {
       content: [
         {
@@ -85,5 +86,6 @@ server.tool(
   }
 );
 
+console.log("Starting Storybook MCP server...");
 const transport = new StdioServerTransport();
 await server.connect(transport);
