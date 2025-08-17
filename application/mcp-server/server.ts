@@ -61,7 +61,7 @@ server.registerTool(
       uri: `file://${path.join(storiesDir, f.file)}`,
       name: f.componentName,
       mimeType: "text/typescript",
-      description: `Story file for component ${f.file.replace(/\.stories\.tsx?$/, "")}`,
+      description: `Story file for component ${f.componentName}`,
     }));
     return {
       content
