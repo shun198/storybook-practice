@@ -3,6 +3,7 @@
 // https://zenn.dev/takuya77088/articles/f7149723b3b2f2
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { ResourceLink } from "@modelcontextprotocol/sdk/types.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -56,7 +57,7 @@ server.registerTool(
   // https://github.com/modelcontextprotocol/typescript-sdk?tab=readme-ov-file#resourcelinks
   // パフォーマンスのため、resource_linkを使ってファイルのURIを返す
   async () => {
-    const content: any[] = storyFiles.map((f) => ({
+    const content: ResourceLink[] = storyFiles.map((f) => ({
       type: "resource_link",
       uri: `file://${path.join(storiesDir, f.file)}`,
       name: f.componentName,
