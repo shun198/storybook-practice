@@ -11,7 +11,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "next": "15.4.6",
+    "next": "16.3.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
@@ -22,7 +22,7 @@
     "@storybook/addon-docs": "^9.1.2",
     "@storybook/addon-onboarding": "^9.1.2",
     "@storybook/addon-vitest": "^9.1.2",
-    "@storybook/nextjs-vite": "^9.1.2",
+    "@storybook/nextjs-vite": "^9.1.20",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
